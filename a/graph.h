@@ -19,3 +19,5 @@ typedef struct graph {
 Graph *createNewGraph();
 void addNewCity(Graph *graph);
 void printCities(Graph *graph);
+void printAdjacencyMatrix(Graph *graph);
+void startMatrixValues(Graph* graph, int size);
