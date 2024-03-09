@@ -7,3 +7,4 @@
 
 void menuOptions();
 void clearScreen();
+void aguardarEnter();
