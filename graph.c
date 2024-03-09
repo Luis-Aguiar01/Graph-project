@@ -14,43 +14,58 @@ Graph *createNewGraph() {
 }
 
 void addNewCity(Graph *graph) {
+    clearScreen();
+
+    printf(BLUE"=========================================================\n");
+    printf("||                 ADICIONAR CIDADES                   ||\n");
+    printf("=========================================================\n"RESET);
+
     City *newCity = malloc(sizeof(City));
 
     printf(GREEN"Digite o nome da cidade: ");
     scanf(" %[^\n]"RESET, newCity->name);
+    
+    if (checkAvailableCity(graph, newCity->name)) {
+        City *firstCity = *(graph->cities);
 
-    City *firstCity = *(graph->cities);
+        if (firstCity == NULL) {
+            *(graph->cities) = newCity;
+            newCity->id = 1;
+            newCity->next = NULL;
+        }
+        else {
+            
+            while (firstCity->next != NULL) {
+                firstCity = firstCity->next;
+            }
 
-    if (firstCity == NULL) {
-        *(graph->cities) = newCity;
-        newCity->id = 1;
-        newCity->next = NULL;
-    }
-    else {
+            firstCity->next = newCity;
+            newCity->next = NULL;
+            newCity->id = firstCity->id + 1;
+        }
         
-        while (firstCity->next != NULL) {
-            firstCity = firstCity->next;
+        int cityCount = getCitiesCount(graph);
+
+        if (graph->adj == NULL) {
+            graph->adj = malloc(sizeof(int *) * cityCount);
+            for (int i = 0; i < cityCount; i++) {
+                graph->adj[i] = malloc(sizeof(int) * cityCount);
+            }
+        }
+        else {
+            graph->adj = realloc(graph->adj, sizeof(int *) * cityCount);
+            graph->adj[cityCount - 1] = malloc(sizeof(int) * cityCount);
         }
 
-        firstCity->next = newCity;
-        newCity->next = NULL;
-        newCity->id = firstCity->id + 1;
+        startMatrixValues(graph, cityCount);
+        
+        printf(GOLDEN"\n\n\"%s\" adicionada com sucesso.\n\n"RESET, newCity->name);
+    }
+    else {
+        printf(RED"\n\nErro: Cidade ja adicionada.\n\n"RESET);
     }
     
-    int cityCount = getCitiesCount(graph);
-
-    if (graph->adj == NULL) {
-        graph->adj = malloc(sizeof(int *) * cityCount);
-        for (int i = 0; i < cityCount; i++) {
-            graph->adj[i] = malloc(sizeof(int) * cityCount);
-        }
-    }
-    else {
-        graph->adj = realloc(graph->adj, sizeof(int *) * cityCount);
-        graph->adj[cityCount - 1] = malloc(sizeof(int) * cityCount);
-    }
-
-    startMatrixValues(graph, cityCount);
+    aguardarEnter();
 }
 
 void chooseCitiesForNewRoad(Graph *graph) {
@@ -101,10 +116,16 @@ bool addNewRoad(Graph *graph, int city1, int city2, int distance) {
     bool result = false;
 
     if (graph->adj[city1][city2] == 0 && graph->adj[city2][city1] == 0) {
+        
         graph->adj[city1][city2] = distance;
         graph->adj[city2][city1] = distance;
+        
+        City *searchCity1 = searchCity(graph, city1);
+        City *searchCity2 = searchCity(graph, city2);
+        
+        printf(GOLDEN"\n\nEstrada entre \"%s\" e \"%s\"adicionada com sucesso!\n\n"RESET, searchCity1->name, searchCity2->name);
+        
         result = true;
-        printf(GREEN"\n\nEstrada adicionada com sucesso!\n\n"RESET);
     }
     else {
         printf(RED"\n\nErro: Ja existe uma estrada ligando as duas cidades.\n\n"RESET);
@@ -115,12 +136,12 @@ bool addNewRoad(Graph *graph, int city1, int city2, int distance) {
 
 void printCities(Graph *graph) {
     
-    City *firstCity = *(graph->cities);
-    
     printf(BLUE"=========================================================\n");
     printf("||                 CIDADES CADASTRADAS                 ||\n");
     printf("=========================================================\n");
-
+    
+    City *firstCity = *(graph->cities);
+    
     while (firstCity != NULL) {
         printf("|| [%d] %-20s                            ||\n", firstCity->id, firstCity->name);
         firstCity = firstCity->next;
@@ -208,7 +229,7 @@ bool removeRoad(Graph *graph, int city1, int city2) {
         graph->adj[city1][city2] = 0;
         graph->adj[city2][city1] = 0;
         result = true;
-        printf(GREEN"\n\nEstrada removida com sucesso!\n\n"RESET);
+        printf(GOLDEN"\n\nEstrada removida com sucesso!\n\n"RESET);
     }
     else {
         printf(RED"\n\nErro: Nao há estrada entre as duas cidades para ser excluida.\n\n"RESET);
@@ -333,11 +354,80 @@ void freeMemory(Graph *graph) {
 }
 
 bool consultRoadBetweenCities(Graph *graph) {
-    bool result = false;
+    clearScreen();
 
+    printf(BLUE"=====================================================\n");
+    printf("||             CONSULTAR ESTRADAS ENTRE CIDADES    ||\n");
+    printf("=====================================================\n"RESET);
     
+    bool result = false;
+    int city1 = 0;
+    int city2 = 0;
+    int citiesCount = getCitiesCount(graph);
 
+    printCities(graph);
 
+    printf(GREEN"Digite o numero da primeira cidade: ");
+    scanf("%d", &city1);
+
+    printf("Digite o numero da segunda cidade: ");
+    scanf("%d"RESET, &city2);
+
+    if (city1 < citiesCount && city1 >= 0) {
+        if (city2 < citiesCount && city2 >= 0) {
+            
+            City *searchCity1 = searchCity(graph, city1 - 1); 
+            City *searchCity2 = searchCity(graph, city2 - 1);
+            
+            if (graph->adj[city1][city2] != 0) {
+                printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2, graph->adj[city1][city2]);
+                result = true;
+            }
+            else {
+                printf(GREEN"\n\nNao existe uma cidade entre \"%s\" e \"%s\".\n\n"RESET, searchCity1->name, searchCity2->name);
+            }
+        } 
+        else {
+            printf(RED"\n\nErro: Valor invalido para a cidade 2.\n\n"RESET);
+        }
+    }
+    else {
+        printf(RED"\n\nErro: Valor invalido para a cidade 1.\n\n"RESET);
+    }
+
+    aguardarEnter();
+
+    return result;
+}
+
+bool checkAvailableCity(Graph *graph, char *cityName) {
+    bool result = true;
+    City *cities = *(graph->cities);
+    
+    while (cities != NULL) {
+        if (stringCompareIgnoreCase(cityName, cities->name)) {
+            result = false;
+        }
+        cities = cities->next;
+    }
+
+    return result;
+}
+
+bool stringCompareIgnoreCase(char *name1, char *name2) {
+    bool result = true;
+
+    if (strlen(name1) == strlen(name2)) {
+        int size = strlen(name1);
+        for (int i = 0; i < size && result != false; i++) {
+            if (tolower(name1[i]) != tolower(name2[i])) {
+                result = false;
+            }
+        }
+    }
+    else {
+        result = false;
+    }
 
     return result;
 }

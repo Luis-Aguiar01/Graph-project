@@ -7,15 +7,15 @@ int main(void) {
 
     while (choice != 0) {
         menuOptions();
-        printf("Digite a sua escolha: ");
-        scanf("%d", &choice);
+        printf(GREEN"Digite a sua escolha: ");
+        scanf("%d"RESET, &choice);
 
         switch(choice) {
             case 1:
                 addNewCity(graph);
                 break;
             case 2:
-                escolherCidades(graph);
+                chooseCitiesForNewRoad(graph);
                 break;
             case 3:
                 chooseCitiesForDeleteRoad(graph);
