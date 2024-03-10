@@ -10,6 +10,7 @@ void menuOptions() {
     printf("|| [3] Remover estrada                 ||\n");
     printf("|| [4] Mostrar estradas diretas        ||\n");
     printf("|| [5] Consultar estrada entre cidades ||\n");
+    printf("|| [6] Mostrar todas as estradas       ||\n");
     printf("|| [0] Sair                            ||\n");
     printf("=========================================\n"RESET);
 }
@@ -23,7 +24,7 @@ void clearScreen() {
 }
 
 void aguardarEnter() {
-    printf(GREEN"PRESSIONE ENTER PARA CONTINUAR: "RESET);
+    printf(GREEN"\n\nPRESSIONE ENTER PARA CONTINUAR: "RESET);
     getchar();
     getchar();
 }

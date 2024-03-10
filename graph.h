@@ -34,3 +34,4 @@ void freeMemory(Graph *graph);
 bool consultRoadBetweenCities(Graph *graph);
 bool checkAvailableCity(Graph *graph, char *cityName);
 bool stringCompareIgnoreCase(char *name1, char *name2);
+bool areThereRegisteredRoads(Graph *graph);

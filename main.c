@@ -26,6 +26,9 @@ int main(void) {
             case 5:
                 consultRoadBetweenCities(graph);
                 break;
+            case 6:
+                printAdjacencyMatrix(graph);
+                break;
             case 0:
                 printf(GOLDEN"\n\nEncerrando...\n\n"RESET);
                 freeMemory(graph);

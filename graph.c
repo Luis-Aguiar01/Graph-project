@@ -22,7 +22,7 @@ void addNewCity(Graph *graph) {
 
     City *newCity = malloc(sizeof(City));
 
-    printf(GREEN"Digite o nome da cidade: ");
+    printf(GREEN"\nDigite o nome da cidade: ");
     scanf(" %[^\n]"RESET, newCity->name);
     
     if (checkAvailableCity(graph, newCity->name)) {
@@ -70,43 +70,52 @@ void addNewCity(Graph *graph) {
 
 void chooseCitiesForNewRoad(Graph *graph) {
     clearScreen();
-    
-    int city1 = 0;
-    int city2 = 0;
-    int distance = 0;
+ 
+    printf(BLUE"=========================================================\n");
+    printf("||                 ADICIONAR ESTRADAS                  ||\n");
+    printf("=========================================================\n"RESET);
 
-    printCities(graph);
-
-    printf(GREEN"Digite o numero da primeira cidade: ");
-    scanf("%d", &city1);
-
-    printf("Digite o numero da segunda cidade: ");
-    scanf("%d", &city2);
-
-    printf("Digite a distancia da estrada: ");
-    scanf("%d"RESET, &distance);
-
-    city1--;
-    city2--;
-    
     int cityCount = getCitiesCount(graph);
     
-    if (city1 >= 0 && city1 < cityCount) {
-        if (city2 >= 0 && city2 < cityCount && city2 != city1) {
-            if (distance > 0) {
-                addNewRoad(graph, city1, city2, distance);
+    if (cityCount >= 2) {
+        int city1 = 0;
+        int city2 = 0;
+        int distance = 0;
+
+        printCities(graph);
+
+        printf(GREEN"\nDigite o numero da primeira cidade: ");
+        scanf("%d", &city1);
+
+        printf("\nDigite o numero da segunda cidade: ");
+        scanf("%d", &city2);
+
+        printf("\nDigite a distancia da estrada: ");
+        scanf("%d"RESET, &distance);
+
+        city1--;
+        city2--;
+        
+        if (city1 >= 0 && city1 < cityCount) {
+            if (city2 >= 0 && city2 < cityCount && city2 != city1) {
+                if (distance > 0) {
+                    addNewRoad(graph, city1, city2, distance);
+                }
+                else {
+                    printf(RED"\n\nErro: A distancia entre as duas cidades nao pode ser zero ou negativa.\n\n"RESET);
+                }
             }
             else {
-                printf(RED"\n\nErro: A distancia entre as duas cidades nao pode ser zero ou negativa.\n\n"RESET);
+                printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
             }
         }
         else {
-            printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
-        }
+            printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
+        } 
     }
     else {
-        printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
-    } 
+        printf(RED"\n\nErro: Nao ha cidades o suficiente para construir estradas.\n\n"RESET);
+    }
 
     aguardarEnter();
 }
@@ -119,11 +128,11 @@ bool addNewRoad(Graph *graph, int city1, int city2, int distance) {
         
         graph->adj[city1][city2] = distance;
         graph->adj[city2][city1] = distance;
-        
+
         City *searchCity1 = searchCity(graph, city1);
         City *searchCity2 = searchCity(graph, city2);
         
-        printf(GOLDEN"\n\nEstrada entre \"%s\" e \"%s\"adicionada com sucesso!\n\n"RESET, searchCity1->name, searchCity2->name);
+        printf(GOLDEN"\n\nEstrada entre \"%s\" e \"%s\" adicionada com sucesso!\n\n"RESET, searchCity1->name, searchCity2->name);
         
         result = true;
     }
@@ -159,13 +168,15 @@ void startMatrixValues(Graph *graph, int size) {
 
 int getCitiesCount(Graph *graph) {
     City *endCity = *(graph->cities);
+    int cityCount = 0;
 
-    while (endCity->next != NULL) {
-        endCity = endCity->next;
+    if (endCity != NULL) {
+        while (endCity->next != NULL) {
+            endCity = endCity->next;
+        }
+        cityCount = endCity->id;
     }
-
-    int cityCount = endCity->id;
-
+    
     return cityCount;
 }
 
@@ -201,8 +212,9 @@ void printAdjacencyMatrix(Graph *graph) {
             endCity = endCity->next;
             printf("\n");
         }
-        printf(RESET);
-    } 
+    }
+    
+    aguardarEnter(); 
 }
 
 int returnNumLenght(int num) {
@@ -239,73 +251,108 @@ bool removeRoad(Graph *graph, int city1, int city2) {
 }
 
 void chooseCitiesForDeleteRoad(Graph *graph) {
-    int city1 = 0;
-    int city2 = 0;
-    
-    printCities(graph);
+    clearScreen();
 
-    printf(GREEN"Digite o numero da primeira cidade: ");
-    scanf("%d", &city1);
-
-    printf("Digite o numero da segunda cidade: ");
-    scanf("%d"RESET, &city2);
-
-    city1--;
-    city2--;
+    printf(BLUE"=====================================================\n");
+    printf("||                DELETAR ESTRADAS                 ||\n");
+    printf("=====================================================\n"RESET);
     
     int cityCount = getCitiesCount(graph);
+    bool areThereRoads = areThereRegisteredRoads(graph);
     
-    if (city1 >= 0 && city1 < cityCount) {
-        if (city2 >= 0 && city2 < cityCount && city2 != city1) {
-            removeRoad(graph, city1, city2);
+    if (cityCount >= 2 && areThereRoads) {
+        int city1 = 0;
+        int city2 = 0;
+        
+        printCities(graph);
+
+        printf(GREEN"Digite o numero da primeira cidade: ");
+        scanf("%d", &city1);
+
+        printf("Digite o numero da segunda cidade: ");
+        scanf("%d"RESET, &city2);
+
+        city1--;
+        city2--;
+        
+        if (city1 >= 0 && city1 < cityCount) {
+            if (city2 >= 0 && city2 < cityCount && city2 != city1) {
+                removeRoad(graph, city1, city2);
+            }
+            else {
+                printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
+            }
         }
         else {
-            printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
-        }
-    }
-    else {
-        printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
+            printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
+        } 
     } 
+    else {
+        printf(RED"\n\nErro: Nao ha estradas para serem excluidas.\n\n"RESET);
+    }
 
     aguardarEnter();
+}
+
+bool areThereRegisteredRoads(Graph *graph) {
+    bool result = false;
+    int size = getCitiesCount(graph);
+    
+    for (int i = 0; i < size && result != true; i++) {
+        for (int j = 0; j < size; j++) {
+            if (graph->adj[i][j] != 0) {
+                result = true;
+            }
+        }
+    }
+
+    return result;
 }
 
 void showDirectRoadsByCity(Graph *graph) {
     clearScreen();
 
-    printf(BLUE"================================================\n");
-    printf("||           PROCURAR ESTRADAS DIRETAS        ||\n");
-    printf("================================================\n"RESET);
+    printf(BLUE"=========================================================\n");
+    printf("||              PROCURAR ESTRADAS DIRETAS              ||\n");
+    printf("=========================================================\n"RESET);
     
-    printCities(graph);
-
-    int city = 0;
     int cityCount = getCitiesCount(graph);
-    int count = 1;
+    bool areThereRoads = areThereRegisteredRoads(graph);
 
-    printf(GREEN"\nEscolha o numero da cidade para ver todas as suas estradas diretas: ");
-    scanf("%d"RESET, &city);
+    if (cityCount >= 2 && areThereRoads) {
+        printCities(graph);
 
-    city--;
+        int city = 0;
+        int count = 1;
 
-    if (city < cityCount && city >= 0) {
-       
-        printf("====================================================\n");
-        printf("||        ESTRADAS DIRETAS DE %-22s               ||\n");
-        printf("====================================================\n");
-        
-        for (int i = city; i < cityCount; i++) {
-            for (int j = 0; j < cityCount; j++) {
-                if (graph->adj[i][j] != 0) {
-                    City *currentCity = searchCity(graph, j); 
-                    printf("|| [%d] %-22s | Distancia: %d km       ||\n", count, currentCity->name, graph->adj[i][j]);
+        printf(GREEN"\nEscolha o numero da cidade para ver todas as suas estradas diretas: ");
+        scanf("%d"RESET, &city);
+
+        city--;
+        City *currentCity = searchCity(graph, city);
+
+        if (city < cityCount && city >= 0) {
+            clearScreen();
+            
+            printf(BLUE"====================================================================\n");
+            printf("||                ESTRADAS DIRETAS DE %-22s      ||\n", currentCity->name);
+            printf("====================================================================\n");
+            
+            for (int i = 0; i < cityCount; i++) {
+                if (graph->adj[city][i] != 0) {
+                    City *currentCity = searchCity(graph, i); 
+                    printf("|| [%d] %-22s\t\t | Distancia: %d km        ||\n", count, currentCity->name, graph->adj[city][i]);
                     count++;
                 }
             }
+            printf("====================================================================\n");
+        }
+        else {
+            printf(RED"\n\nErro: Numero de cidade invalido.\n\n"RESET);
         }
     }
     else {
-        printf(RED"\n\nErro: Numero de cidade invalido.\n\n"RESET);
+        printf(RED"\n\nErro: Nao ha cidades ou estradas cadastradas.\n\n"RESET);
     }
 
     aguardarEnter();
@@ -313,9 +360,9 @@ void showDirectRoadsByCity(Graph *graph) {
 
 City *searchCity(Graph *graph, int ID) {
     City *searchCity = *(graph->cities);
-
+     
     if (searchCity != NULL) {
-        while (searchCity != NULL && searchCity->id != ID) {
+        while (searchCity != NULL && searchCity->id - 1 != ID) {
             searchCity = searchCity->next;
         }
     }
@@ -360,41 +407,48 @@ bool consultRoadBetweenCities(Graph *graph) {
     printf("||             CONSULTAR ESTRADAS ENTRE CIDADES    ||\n");
     printf("=====================================================\n"RESET);
     
-    bool result = false;
-    int city1 = 0;
-    int city2 = 0;
     int citiesCount = getCitiesCount(graph);
+    bool areThereRoads = areThereRegisteredRoads(graph);
+    bool result = false;
+    
+    if (citiesCount >= 2 && areThereRoads) {
+        int city1 = 0;
+        int city2 = 0;
 
-    printCities(graph);
+        printCities(graph);
 
-    printf(GREEN"Digite o numero da primeira cidade: ");
-    scanf("%d", &city1);
+        printf(GREEN"Digite o numero da primeira cidade: ");
+        scanf("%d", &city1);
 
-    printf("Digite o numero da segunda cidade: ");
-    scanf("%d"RESET, &city2);
+        printf("Digite o numero da segunda cidade: ");
+        scanf("%d"RESET, &city2);
 
-    if (city1 < citiesCount && city1 >= 0) {
-        if (city2 < citiesCount && city2 >= 0) {
-            
-            City *searchCity1 = searchCity(graph, city1 - 1); 
-            City *searchCity2 = searchCity(graph, city2 - 1);
-            
-            if (graph->adj[city1][city2] != 0) {
-                printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2, graph->adj[city1][city2]);
-                result = true;
-            }
+        if (city1 < citiesCount && city1 >= 0) {
+            if (city2 < citiesCount && city2 >= 0) {
+                
+                City *searchCity1 = searchCity(graph, city1 - 1); 
+                City *searchCity2 = searchCity(graph, city2 - 1);
+                
+                if (graph->adj[city1][city2] != 0) {
+                    printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2, graph->adj[city1][city2]);
+                    result = true;
+                }
+                else {
+                    printf(GREEN"\n\nNao existe uma cidade entre \"%s\" e \"%s\".\n\n"RESET, searchCity1->name, searchCity2->name);
+                }
+            } 
             else {
-                printf(GREEN"\n\nNao existe uma cidade entre \"%s\" e \"%s\".\n\n"RESET, searchCity1->name, searchCity2->name);
+                printf(RED"\n\nErro: Valor invalido para a cidade 2.\n\n"RESET);
             }
-        } 
+        }
         else {
-            printf(RED"\n\nErro: Valor invalido para a cidade 2.\n\n"RESET);
+            printf(RED"\n\nErro: Valor invalido para a cidade 1.\n\n"RESET);
         }
     }
     else {
-        printf(RED"\n\nErro: Valor invalido para a cidade 1.\n\n"RESET);
+        printf(RED"\n\nErro: Nao ha cidades ou estradas cadastradas.\n\n"RESET);
     }
-
+    
     aguardarEnter();
 
     return result;
