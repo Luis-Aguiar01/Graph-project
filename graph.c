@@ -4,7 +4,8 @@ Graph *createNewGraph() {
     Graph *newGraph = malloc(sizeof(Graph));
 
     newGraph->adj = malloc(sizeof(int **));
-    
+    *(newGraph->adj) = NULL;
+
     newGraph->cities = malloc(sizeof(City **));
     *(newGraph->cities) = NULL;
     
@@ -21,6 +22,7 @@ void addNewCity(Graph *graph) {
     printf("=========================================================\n"RESET);
 
     City *newCity = malloc(sizeof(City));
+    startCity(newCity);
 
     printf(GREEN"\nDigite o nome da cidade: ");
     scanf(" %[^\n]"RESET, newCity->name);
@@ -68,6 +70,12 @@ void addNewCity(Graph *graph) {
     aguardarEnter();
 }
 
+void startCity(City *city) {
+    city->id = -1;
+    strcpy(city->name, "");
+    city->next = NULL;
+}
+
 void chooseCitiesForNewRoad(Graph *graph) {
     clearScreen();
  
@@ -90,7 +98,7 @@ void chooseCitiesForNewRoad(Graph *graph) {
         printf("\nDigite o numero da segunda cidade: ");
         scanf("%d", &city2);
 
-        printf("\nDigite a distancia da estrada: ");
+        printf("\nDigite a distancia da estrada(km): ");
         scanf("%d"RESET, &distance);
 
         city1--;
@@ -160,9 +168,21 @@ void printCities(Graph *graph) {
 }
 
 void startMatrixValues(Graph *graph, int size) {
+    int newCityIndex = size - 1;
+
     for (int i = 0; i < size; i++) {
-        graph->adj[size - 1][i] = 0;
-        graph->adj[i][size - 1] = 0;
+        graph->adj[newCityIndex][i] = 0; 
+    }
+
+    for (int i = 0; i < newCityIndex; i++) {
+       graph->adj[i][newCityIndex] = 0; 
+    }
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            printf("%2d ", graph->adj[i][j]);
+        }
+        printf("\n");
     }
 }
 
@@ -266,10 +286,10 @@ void chooseCitiesForDeleteRoad(Graph *graph) {
         
         printCities(graph);
 
-        printf(GREEN"Digite o numero da primeira cidade: ");
+        printf(GREEN"\nDigite o numero da primeira cidade: ");
         scanf("%d", &city1);
 
-        printf("Digite o numero da segunda cidade: ");
+        printf("\nDigite o numero da segunda cidade: ");
         scanf("%d"RESET, &city2);
 
         city1--;
@@ -341,7 +361,7 @@ void showDirectRoadsByCity(Graph *graph) {
             for (int i = 0; i < cityCount; i++) {
                 if (graph->adj[city][i] != 0) {
                     City *currentCity = searchCity(graph, i); 
-                    printf("|| [%d] %-22s\t\t | Distancia: %d km        ||\n", count, currentCity->name, graph->adj[city][i]);
+                    printf("|| [%d] %-22s\t\t | Distancia(km): %-5d   ||\n", count, currentCity->name, graph->adj[city][i]);
                     count++;
                 }
             }
@@ -403,9 +423,9 @@ void freeMemory(Graph *graph) {
 bool consultRoadBetweenCities(Graph *graph) {
     clearScreen();
 
-    printf(BLUE"=====================================================\n");
-    printf("||             CONSULTAR ESTRADAS ENTRE CIDADES    ||\n");
-    printf("=====================================================\n"RESET);
+    printf(BLUE"=========================================================\n");
+    printf("||             CONSULTAR ESTRADAS ENTRE CIDADES        ||\n");
+    printf("=========================================================\n"RESET);
     
     int citiesCount = getCitiesCount(graph);
     bool areThereRoads = areThereRegisteredRoads(graph);
@@ -417,11 +437,14 @@ bool consultRoadBetweenCities(Graph *graph) {
 
         printCities(graph);
 
-        printf(GREEN"Digite o numero da primeira cidade: ");
+        printf(GREEN"\nDigite o numero da primeira cidade: ");
         scanf("%d", &city1);
 
-        printf("Digite o numero da segunda cidade: ");
+        printf("\nDigite o numero da segunda cidade: ");
         scanf("%d"RESET, &city2);
+
+        city1--;
+        city2--;
 
         if (city1 < citiesCount && city1 >= 0) {
             if (city2 < citiesCount && city2 >= 0) {
