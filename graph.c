@@ -177,13 +177,6 @@ void startMatrixValues(Graph *graph, int size) {
     for (int i = 0; i < newCityIndex; i++) {
        graph->adj[i][newCityIndex] = 0; 
     }
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            printf("%2d ", graph->adj[i][j]);
-        }
-        printf("\n");
-    }
 }
 
 int getCitiesCount(Graph *graph) {
@@ -227,7 +220,12 @@ void printAdjacencyMatrix(Graph *graph) {
                 int largura = 22;
                 int tamanho = returnNumLenght(graph->adj[i][j]);
                 int result = (largura - tamanho) / 2;
-                printf("%*s%d%*s|", result, "", graph->adj[i][j], result, "");
+                if (tamanho % 2 == 0) {
+                    printf("%*s%d%*s|", ++result, "", graph->adj[i][j], --result, "");
+                }
+                else {
+                   printf("%*s%d%*s |", result, "", graph->adj[i][j], result, ""); 
+                }       
             }
             endCity = endCity->next;
             printf("\n");
