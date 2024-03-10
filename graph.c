@@ -28,22 +28,22 @@ void addNewCity(Graph *graph) {
     scanf(" %[^\n]"RESET, newCity->name);
     
     if (checkAvailableCity(graph, newCity->name)) {
-        City *firstCity = *(graph->cities);
+        City *cities = *(graph->cities);
 
-        if (firstCity == NULL) {
+        if (cities == NULL) {
             *(graph->cities) = newCity;
             newCity->id = 1;
             newCity->next = NULL;
         }
         else {
             
-            while (firstCity->next != NULL) {
-                firstCity = firstCity->next;
+            while (cities->next != NULL) {
+                cities = cities->next;
             }
 
-            firstCity->next = newCity;
+            cities->next = newCity;
             newCity->next = NULL;
-            newCity->id = firstCity->id + 1;
+            newCity->id = cities->id + 1;
         }
         
         int cityCount = getCitiesCount(graph);
@@ -153,18 +153,18 @@ bool addNewRoad(Graph *graph, int city1, int city2, int distance) {
 
 void printCities(Graph *graph) {
     
-    printf(BLUE"=========================================================\n");
-    printf("||                 CIDADES CADASTRADAS                 ||\n");
-    printf("=========================================================\n");
+    printf(BLUE"==========================================================\n");
+    printf("||                 CIDADES CADASTRADAS                  ||\n");
+    printf("==========================================================\n");
     
-    City *firstCity = *(graph->cities);
+    City *cities = *(graph->cities);
     
-    while (firstCity != NULL) {
-        printf("|| [%d] %-20s                            ||\n", firstCity->id, firstCity->name);
-        firstCity = firstCity->next;
+    while (cities != NULL) {
+        printf("|| [%d] %-20s \t\t\t\t||\n", cities->id, cities->name);
+        cities = cities->next;
     }
 
-    printf("=========================================================\n"RESET);
+    printf("==========================================================\n"RESET);
 }
 
 void startMatrixValues(Graph *graph, int size) {
@@ -180,14 +180,14 @@ void startMatrixValues(Graph *graph, int size) {
 }
 
 int getCitiesCount(Graph *graph) {
-    City *endCity = *(graph->cities);
+    City *cities = *(graph->cities);
     int cityCount = 0;
 
-    if (endCity != NULL) {
-        while (endCity->next != NULL) {
-            endCity = endCity->next;
+    if (cities != NULL) {
+        while (cities->next != NULL) {
+            cities = cities->next;
         }
-        cityCount = endCity->id;
+        cityCount = cities->id;
     }
     
     return cityCount;
@@ -196,28 +196,28 @@ int getCitiesCount(Graph *graph) {
 void printAdjacencyMatrix(Graph *graph) {
     clearScreen();
 
-    City *endCity = *(graph->cities);
+    City *cities = *(graph->cities);
     
-    if (endCity != NULL) {
+    if (cities != NULL) {
+        int largura = 22;
         
         printf(BLUE"                       ");
        
-        while (endCity!= NULL) {
-            int largura = 22;
-            int tamanho = largura - strlen(endCity->name);
-            printf("%*s%s%*s", tamanho / 2, "", endCity->name, tamanho / 2, "");
-            endCity = endCity->next;
+        while (cities!= NULL) {
+            int size = largura - strlen(cities->name);
+            printf("%*s%s%*s", size / 2, "", cities->name, size / 2, "");
+            cities = cities->next;
         }
 
         printf("\n");
 
-        endCity = *(graph->cities);
+        cities = *(graph->cities);
         int cityCount = getCitiesCount(graph);
 
         for (int i = 0; i < cityCount; i++) {
-            printf("%-22s|", endCity->name);
+            printf("%-22s|", cities->name);
+            
             for (int j = 0; j < cityCount; j++) {
-                int largura = 22;
                 int tamanho = returnNumLenght(graph->adj[i][j]);
                 int result = (largura - tamanho) / 2;
                 if (tamanho % 2 == 0) {
@@ -227,7 +227,8 @@ void printAdjacencyMatrix(Graph *graph) {
                    printf("%*s%d%*s |", result, "", graph->adj[i][j], result, ""); 
                 }       
             }
-            endCity = endCity->next;
+            
+            cities = cities->next;
             printf("\n");
         }
     }
@@ -447,8 +448,8 @@ bool consultRoadBetweenCities(Graph *graph) {
         if (city1 < citiesCount && city1 >= 0) {
             if (city2 < citiesCount && city2 >= 0) {
                 
-                City *searchCity1 = searchCity(graph, city1 - 1); 
-                City *searchCity2 = searchCity(graph, city2 - 1);
+                City *searchCity1 = searchCity(graph, city1); 
+                City *searchCity2 = searchCity(graph, city2);
                 
                 if (graph->adj[city1][city2] != 0) {
                     printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2, graph->adj[city1][city2]);
