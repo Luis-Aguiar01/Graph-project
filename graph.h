@@ -17,6 +17,16 @@ typedef struct graph {
     int **adj;
 } Graph;
 
+typedef struct nodeQueue {
+    int id;
+    int custo;
+} NodeQueue;
+
+typedef struct priorityQueue {
+    int size;
+    NodeQueue *heap;
+} PriorityQueue;
+
 Graph *createNewGraph();
 void addNewCity(Graph *graph);
 void printCities(Graph *graph);
@@ -36,3 +46,10 @@ bool checkAvailableCity(Graph *graph, char *cityName);
 bool stringCompareIgnoreCase(char *name1, char *name2);
 bool areThereRegisteredRoads(Graph *graph);
 void startCity(City *city);
+int compareQueueNodes(const void *a, const void *b);
+PriorityQueue *createPriorityQueue(int numVertices);
+void enqueue(PriorityQueue *pq, int id, int custo);
+NodeQueue dequeue(PriorityQueue *pq);
+void dijkstra(Graph *g, int origem);
+void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int origem);
+void chooseCityForMinPath(Graph *graph);

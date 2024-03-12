@@ -29,6 +29,9 @@ int main(void) {
             case 6:
                 printAdjacencyMatrix(graph);
                 break;
+            case 7:
+                chooseCityForMinPath(graph);
+                break;
             case 0:
                 printf(GOLDEN"\n\nEncerrando...\n\n"RESET);
                 freeMemory(graph);

@@ -168,14 +168,9 @@ void printCities(Graph *graph) {
 }
 
 void startMatrixValues(Graph *graph, int size) {
-    int newCityIndex = size - 1;
-
     for (int i = 0; i < size; i++) {
-        graph->adj[newCityIndex][i] = 0; 
-    }
-
-    for (int i = 0; i < newCityIndex; i++) {
-       graph->adj[i][newCityIndex] = 0; 
+        graph->adj[size - 1][i] = 0;  
+        graph->adj[i][size - 1] = 0;  
     }
 }
 
@@ -506,4 +501,103 @@ bool stringCompareIgnoreCase(char *name1, char *name2) {
     }
 
     return result;
+}
+
+int compareQueueNodes(const void *a, const void *b) {
+    NodeQueue *node1 = (NodeQueue *)a;
+    NodeQueue *node2 = (NodeQueue *)b;
+    
+    return node1->custo - node2->custo;
+}
+
+PriorityQueue *createPriorityQueue(int numVertices) {
+    PriorityQueue *pq = (PriorityQueue *) malloc(sizeof(PriorityQueue));
+    pq->size = 0;
+    pq->heap = (NodeQueue *) malloc(sizeof(NodeQueue) * numVertices);
+    return pq;
+}
+
+void enqueue(PriorityQueue *pq, int id, int custo) {
+    NodeQueue node;
+    node.id = id;
+    node.custo = custo;
+    pq->heap[pq->size] = node;
+    pq->size++;
+    qsort(pq->heap, pq->size, sizeof(NodeQueue), compareQueueNodes);
+}
+
+NodeQueue dequeue(PriorityQueue *pq) {
+    return pq->heap[--pq->size];
+}
+
+void chooseCityForMinPath(Graph *graph) {
+    clearScreen();
+
+    printf(BLUE"=========================================================\n");
+    printf("||             CONSULTAR CAMINHOS MINIMOS              ||\n");
+    printf("=========================================================\n"RESET);
+
+    printCities(graph);
+
+    int city = 0;
+    int citiesCount = getCitiesCount(graph);
+
+    printf(GREEN"\nEscolha a cidade para consultar seus caminhos minimos: "RESET);
+    scanf("%d", &city);
+
+    city--;
+
+    if (city >= 0 && city < citiesCount) {
+        dijkstra(graph, city);
+    }
+}
+
+void dijkstra(Graph *g, int origem) {
+    int numVertices = getCitiesCount(g);
+    int dist[numVertices];
+    
+    for (int i = 0; i < numVertices; i++) {
+        dist[i] = __INT_MAX__;
+    }
+
+    dist[origem] = 0;
+
+    PriorityQueue *pq = createPriorityQueue(numVertices);
+    enqueue(pq, origem, 0);
+
+    while (pq->size > 0) {
+        NodeQueue node = dequeue(pq);
+        int u = node.id;
+
+        for (int i = 0; i < numVertices; i++) {
+            int v = i;
+            int weight = g->adj[u][i];
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                enqueue(pq, v, dist[v]);
+            }
+        }
+    }
+
+    printResultForDijkstra(g, numVertices, dist, origem);
+}
+
+void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int origem) {
+    clearScreen();
+    
+    City *originCity = searchCity(graph, origem);
+
+    printf(BLUE"=========================================================\n");
+    printf("||             CAMINHOS MINIMOS DE %s                  ||\n", originCity->name);
+    printf("=========================================================\n");
+
+    printf("=========================================================\n");
+    
+    for (int i = 0; i < numVertices; i++) {
+        City *city = searchCity(graph, i);
+        printf("|| Distancia minima de \"%s\" ate \"%s\": %d km ||\n", originCity->name, city, dist[i]);
+    }
+
+    printf("=========================================================\n"RESET);
+    aguardarEnter();
 }

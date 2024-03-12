@@ -11,6 +11,7 @@ void menuOptions() {
     printf("|| [4] Mostrar estradas diretas        ||\n");
     printf("|| [5] Consultar estrada entre cidades ||\n");
     printf("|| [6] Mostrar cidades e estradas      ||\n");
+    printf("|| [7] Exibir caminhos minimos         ||\n");
     printf("|| [0] Sair                            ||\n");
     printf("=========================================\n"RESET);
 }
