@@ -31,7 +31,7 @@ Graph *createNewGraph();
 void addNewCity(Graph *graph);
 void printCities(Graph *graph);
 void printAdjacencyMatrix(Graph *graph);
-void startMatrixValues(Graph *graph, int size);
+void startMatrixValues(Graph *graph);
 bool addNewRoad(Graph *graph, int city1, int city2, int distance);
 int getCitiesCount(Graph *graph);
 void chooseCitiesForNewRoad(Graph *graph);

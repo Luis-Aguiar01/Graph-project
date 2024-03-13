@@ -7,7 +7,7 @@ int main(void) {
 
     while (choice != 0) {
         menuOptions();
-        printf(GREEN"Digite a sua escolha: ");
+        printf(GREEN"\nDigite a sua escolha: ");
         scanf("%d"RESET, &choice);
 
         switch(choice) {

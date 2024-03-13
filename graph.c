@@ -45,21 +45,8 @@ void addNewCity(Graph *graph) {
             newCity->next = NULL;
             newCity->id = cities->id + 1;
         }
-        
-        int cityCount = getCitiesCount(graph);
 
-        if (graph->adj == NULL) {
-            graph->adj = malloc(sizeof(int *) * cityCount);
-            for (int i = 0; i < cityCount; i++) {
-                graph->adj[i] = malloc(sizeof(int) * cityCount);
-            }
-        }
-        else {
-            graph->adj = realloc(graph->adj, sizeof(int *) * cityCount);
-            graph->adj[cityCount - 1] = malloc(sizeof(int) * cityCount);
-        }
-
-        startMatrixValues(graph, cityCount);
+        startMatrixValues(graph);
         
         printf(GOLDEN"\n\n\"%s\" adicionada com sucesso.\n\n"RESET, newCity->name);
     }
@@ -167,10 +154,33 @@ void printCities(Graph *graph) {
     printf("==========================================================\n"RESET);
 }
 
-void startMatrixValues(Graph *graph, int size) {
-    for (int i = 0; i < size; i++) {
-        graph->adj[size - 1][i] = 0;  
-        graph->adj[i][size - 1] = 0;  
+void startMatrixValues(Graph *graph) {
+    int cityCount = getCitiesCount(graph);
+
+    if (graph->adj == NULL) {
+        graph->adj = malloc(sizeof(int *) * cityCount); 
+        
+        for (int i = 0; i < cityCount; i++) {
+            graph->adj[i] = malloc(sizeof(int) * cityCount);
+            
+            for (int j = 0; j < cityCount; j++) {
+                graph->adj[i][j] = 0;
+            }
+        }
+    }
+    else {
+        graph->adj = realloc(graph->adj, sizeof(int *) * cityCount);
+        
+        for (int i = 0; i < cityCount - 1; i++) {
+            graph->adj[i] = realloc(graph->adj[i], sizeof(int) * cityCount);
+            graph->adj[i][cityCount - 1] = 0;
+        }
+        
+        graph->adj[cityCount - 1] = malloc(sizeof(int) * cityCount); 
+        
+        for (int i = 0; i < cityCount; i++) {
+            graph->adj[cityCount - 1][i] = 0;
+        }
     }
 }
 
@@ -412,6 +422,8 @@ void freeMemory(Graph *graph) {
 
         graph->adj = NULL;
     }
+
+    free(graph);
 }
 
 bool consultRoadBetweenCities(Graph *graph) {
@@ -447,7 +459,7 @@ bool consultRoadBetweenCities(Graph *graph) {
                 City *searchCity2 = searchCity(graph, city2);
                 
                 if (graph->adj[city1][city2] != 0) {
-                    printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2, graph->adj[city1][city2]);
+                    printf(GREEN"\n\nExiste uma cidade entre \"%s\" e \"%s\" de %d km.\n\n"RESET, searchCity1->name, searchCity2->name, graph->adj[city1][city2]);
                     result = true;
                 }
                 else {
