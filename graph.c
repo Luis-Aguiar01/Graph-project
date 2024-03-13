@@ -599,17 +599,17 @@ void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int origem
     
     City *originCity = searchCity(graph, origem);
 
-    printf(BLUE"=========================================================\n");
-    printf("||             CAMINHOS MINIMOS DE %s                  ||\n", originCity->name);
-    printf("=========================================================\n");
+    printf(BLUE"===========================================================\n");
+    printf("||             CAMINHOS MINIMOS DE %-22s||\n", originCity->name);
+    printf("===========================================================\n");
 
-    printf("=========================================================\n");
+    printf("===========================================================\n");
     
     for (int i = 0; i < numVertices; i++) {
         City *city = searchCity(graph, i);
-        printf("|| Distancia minima de \"%s\" ate \"%s\": %d km ||\n", originCity->name, city, dist[i]);
+        printf("Distancia minima de \"%s\" ate \"%s\": %d km \n", originCity->name, city, dist[i]);
     }
 
-    printf("=========================================================\n"RESET);
+    printf("===========================================================\n"RESET);
     aguardarEnter();
 }
