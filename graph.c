@@ -101,11 +101,11 @@ void chooseCitiesForNewRoad(Graph *graph) {
                 }
             }
             else {
-                printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
+                printf(RED"\n\nErro: Numero invalido para a segunda cidade.\n\n"RESET);
             }
         }
         else {
-            printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
+            printf(RED"\n\nErro: Numero invalido para a primeira cidade.\n\n"RESET);
         } 
     }
     else {
@@ -204,13 +204,16 @@ void printAdjacencyMatrix(Graph *graph) {
     City *cities = *(graph->cities);
     
     if (cities != NULL) {
-        int largura = 22;
+        int largura = 23;
         
         printf(BLUE"                       ");
        
-        while (cities!= NULL) {
+        while (cities != NULL) {
+            int largura = 24;
             int size = largura - strlen(cities->name);
-            printf("%*s%s%*s", size / 2, "", cities->name, size / 2, "");
+            int espaco = (size / 2);
+
+            printf("%*s%s%*s", espaco, " ", cities->name, espaco, " ");
             cities = cities->next;
         }
 
@@ -226,10 +229,10 @@ void printAdjacencyMatrix(Graph *graph) {
                 int tamanho = returnNumLenght(graph->adj[i][j]);
                 int result = (largura - tamanho) / 2;
                 if (tamanho % 2 == 0) {
-                    printf("%*s%d%*s|", ++result, "", graph->adj[i][j], --result, "");
+                    printf("%*s%d%*s |", result, "", graph->adj[i][j], result, "");
                 }
                 else {
-                   printf("%*s%d%*s |", result, "", graph->adj[i][j], result, ""); 
+                    printf("%*s%d%*s|", result, "", graph->adj[i][j], result, ""); 
                 }       
             }
             
@@ -246,7 +249,7 @@ int returnNumLenght(int num) {
     int result = 0;
 
     if (num <= 9) {
-        result = 1;
+        return 1;
     }
 
     while (num != 0) {
@@ -268,7 +271,7 @@ bool removeRoad(Graph *graph, int city1, int city2) {
         printf(GOLDEN"\n\nEstrada removida com sucesso!\n\n"RESET);
     }
     else {
-        printf(RED"\n\nErro: Nao há estrada entre as duas cidades para ser excluida.\n\n"RESET);
+        printf(RED"\n\nErro: Nao ha estrada entre as duas cidades para ser excluida.\n\n"RESET);
     }
 
     return result;
@@ -304,11 +307,11 @@ void chooseCitiesForDeleteRoad(Graph *graph) {
                 removeRoad(graph, city1, city2);
             }
             else {
-                printf(RED"\n\nErro: Número inválido para a segunda cidade.\n\n"RESET);
+                printf(RED"\n\nErro: Numero invalido para a segunda cidade.\n\n"RESET);
             }
         }
         else {
-            printf(RED"\n\nErro: Número inválido para a primeira cidade.\n\n"RESET);
+            printf(RED"\n\nErro: Numero invalido para a primeira cidade.\n\n"RESET);
         } 
     } 
     else {
@@ -554,8 +557,8 @@ void chooseCityForMinPath(Graph *graph) {
     int city = 0;
     int citiesCount = getCitiesCount(graph);
 
-    printf(GREEN"\nEscolha a cidade para consultar seus caminhos minimos: "RESET);
-    scanf("%d", &city);
+    printf(GREEN"\nEscolha a cidade para consultar seus caminhos minimos: ");
+    scanf("%d"RESET, &city);
 
     city--;
 
@@ -567,49 +570,53 @@ void chooseCityForMinPath(Graph *graph) {
 void dijkstra(Graph *g, int origem) {
     int numVertices = getCitiesCount(g);
     int dist[numVertices];
+    int from[numVertices];
     
     for (int i = 0; i < numVertices; i++) {
         dist[i] = __INT_MAX__;
     }
 
     dist[origem] = 0;
+    from[origem] = origem;
 
     PriorityQueue *pq = createPriorityQueue(numVertices);
     enqueue(pq, origem, 0);
 
     while (pq->size > 0) {
         NodeQueue node = dequeue(pq);
-        int u = node.id;
+        int vertice1 = node.id;
 
         for (int i = 0; i < numVertices; i++) {
-            int v = i;
-            int weight = g->adj[u][i];
-            if (dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
-                enqueue(pq, v, dist[v]);
+            int vertice2 = i;
+            int weight = g->adj[vertice1][vertice2];
+            if (dist[vertice1] + weight < dist[vertice2]) {
+                dist[vertice2] = dist[vertice1] + weight;
+                from[vertice2] = vertice1;
+                enqueue(pq, vertice2, dist[vertice2]);
             }
         }
     }
 
-    printResultForDijkstra(g, numVertices, dist, origem);
+    printResultForDijkstra(g, numVertices, dist, from, origem);
 }
 
-void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int origem) {
+void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int *from, int origem) {
     clearScreen();
     
     City *originCity = searchCity(graph, origem);
 
-    printf(BLUE"===========================================================\n");
-    printf("||             CAMINHOS MINIMOS DE %-22s||\n", originCity->name);
-    printf("===========================================================\n");
+    printf(BLUE"=====================================================================================\n");
+    printf("||                               CAMINHOS MINIMOS DE %-22s        ||\n", originCity->name);
+    printf("=====================================================================================\n");
 
-    printf("===========================================================\n");
+    printf("=====================================================================================\n");
     
     for (int i = 0; i < numVertices; i++) {
         City *city = searchCity(graph, i);
-        printf("Distancia minima de \"%s\" ate \"%s\": %d km \n", originCity->name, city, dist[i]);
+        City *city2 = searchCity(graph, from[i]);
+        printf("|| Distancia minima de \"%s\" ate \"%s\": %d km atraves de \"%s\".\n", originCity->name, city, dist[i], city2->name);
     }
 
-    printf("===========================================================\n"RESET);
+    printf("=====================================================================================\n"RESET);
     aguardarEnter();
 }
