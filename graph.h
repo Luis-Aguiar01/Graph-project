@@ -38,7 +38,6 @@ int getCitiesCount(Graph *graph);
 void chooseCitiesForNewRoad(Graph *graph);
 bool removeRoad(Graph *graph, int city1, int city2);
 void chooseCitiesForDeleteRoad(Graph *graph);
-int returnNumLenght(int num);
 void showDirectRoadsByCity(Graph *graph);
 City *searchCity(Graph *graph, int ID);
 void freeMemory(Graph *graph);

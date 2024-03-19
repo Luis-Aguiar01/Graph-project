@@ -249,22 +249,6 @@ void printAdjacencyMatrix(Graph *graph) {
     aguardarEnter(); 
 }
 
-int returnNumLenght(int num) {
-
-    int result = 0;
-
-    if (num <= 9) {
-        return 1;
-    }
-
-    while (num != 0) {
-        result++;
-        num /= 10;
-    }
-
-    return result;
-}
-
 bool removeRoad(Graph *graph, int city1, int city2) {
 
     bool result = false;
