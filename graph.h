@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <limits.h>
 #include "interface.h"
 
 typedef struct city {
@@ -52,5 +53,5 @@ PriorityQueue *createPriorityQueue(int numVertices);
 void enqueue(PriorityQueue *pq, int id, int custo);
 NodeQueue dequeue(PriorityQueue *pq);
 void dijkstra(Graph *g, int origem);
-void printResultForDijkstra(Graph *graph, int numVertices, int *dist, int *from, int origem);
 void chooseCityForMinPath(Graph *graph);
+void printPath(Graph *g, int destino, int *path);
