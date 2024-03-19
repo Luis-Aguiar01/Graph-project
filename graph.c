@@ -9,8 +9,6 @@ Graph *createNewGraph() {
     newGraph->cities = malloc(sizeof(City **));
     *(newGraph->cities) = NULL;
     
-    newGraph->roads = 0;
-
     return newGraph;
 }
 
@@ -200,6 +198,14 @@ int getCitiesCount(Graph *graph) {
 
 void printAdjacencyMatrix(Graph *graph) {
     clearScreen();
+
+    int citiesCount = getCitiesCount(graph);
+
+    if (citiesCount == 0) {
+        printf(RED"\n\nErro: Nao ha nenhuma cidade cadastrada.\n\n"RESET);
+        aguardarEnter();
+        return;
+    }
 
     City *cities = *(graph->cities);
     
@@ -553,11 +559,18 @@ void chooseCityForMinPath(Graph *graph) {
     printf(BLUE"=========================================================\n");
     printf("||             CONSULTAR CAMINHOS MINIMOS              ||\n");
     printf("=========================================================\n"RESET);
+    
+    int citiesCount = getCitiesCount(graph);
+    
+    if (citiesCount == 0) {
+        printf(RED"\n\nErro: Nao ha cidades cadastradas.\n\n"RESET);
+        aguardarEnter();
+        return;
+    }
 
     printCities(graph);
 
     int city = 0;
-    int citiesCount = getCitiesCount(graph);
 
     printf(GREEN"\nEscolha a cidade para consultar seus caminhos minimos: ");
     scanf("%d"RESET, &city);
@@ -567,15 +580,19 @@ void chooseCityForMinPath(Graph *graph) {
     if (city >= 0 && city < citiesCount) {
         dijkstra(graph, city);
     }
+    else {
+        printf(RED"\n\nErro: Valor invalido para a cidade.\n\n"RESET);
+        aguardarEnter();
+    }
 }
 
 void dijkstra(Graph *g, int origem) {
-    int numVertices = getCitiesCount(g);
-    int distance[numVertices];
-    int path[numVertices];
-    bool visited[numVertices];
+    int cityCount = getCitiesCount(g);
+    int distance[cityCount];
+    int path[cityCount];
+    bool visited[cityCount];
     
-    for (int i = 0; i < numVertices; i++) {
+    for (int i = 0; i < cityCount; i++) {
         distance[i] = INT_MAX;
         visited[i] = false;
         path[i] = -1;
@@ -583,14 +600,14 @@ void dijkstra(Graph *g, int origem) {
 
     distance[origem] = 0;
 
-    PriorityQueue *pq = createPriorityQueue(numVertices);
+    PriorityQueue *pq = createPriorityQueue(cityCount);
     enqueue(pq, origem, 0);
 
     while (pq->size > 0) {
         NodeQueue node = dequeue(pq);
         int city1 = node.id;
 
-        for (int i = 0; i < numVertices; i++) {
+        for (int i = 0; i < cityCount; i++) {
             int city2 = i;
             int weight = g->adj[city1][city2];
             bool result = distance[city1] + weight < distance[city2];
@@ -606,7 +623,25 @@ void dijkstra(Graph *g, int origem) {
         visited[city1] = true;
     }
 
-    for (int i = 0; i < numVertices; i++) {
+    printResultForDijkstra(g, path, distance, origem);
+
+    aguardarEnter(); 
+}
+
+void printResultForDijkstra(Graph *g, int *path, int *distance, int origem) {
+    clearScreen();
+    
+    City *originCity = searchCity(g, origem);
+
+    printf(GREEN"============================================================================\n");
+    printf("                       CAMINHOS MINIMOS DE %s                               \n", originCity->name);
+    printf("============================================================================\n"RESET);
+
+    int cityCount = getCitiesCount(g);
+    
+    printf(GREEN"============================================================================\n\n"RESET);
+    
+    for (int i = 0; i < cityCount; i++) {
         City *city = searchCity(g, i);
         
         printf(GREEN"Caminhos minimos de \"%s\": ", city->name);
@@ -619,10 +654,10 @@ void dijkstra(Graph *g, int origem) {
             printf(" -> Nao ha caminho para essa cidade.");
         }
         
-        printf("\n"RESET);
+        printf("\n\n"RESET);
     }
 
-    aguardarEnter(); 
+    printf(GREEN"============================================================================\n"RESET);
 }
 
 void printPath(Graph *g, int destino, int *path) {

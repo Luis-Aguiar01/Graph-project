@@ -15,7 +15,6 @@ typedef struct city {
 
 typedef struct graph {
     City **cities;
-    int roads;
     int **adj;
 } Graph;
 
@@ -55,3 +54,4 @@ NodeQueue dequeue(PriorityQueue *pq);
 void dijkstra(Graph *g, int origem);
 void chooseCityForMinPath(Graph *graph);
 void printPath(Graph *g, int destino, int *path);
+void printResultForDijkstra(Graph *g, int *path, int *distance, int origem);
