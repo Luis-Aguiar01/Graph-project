@@ -208,18 +208,19 @@ void printAdjacencyMatrix(Graph *graph) {
     }
 
     City *cities = *(graph->cities);
-    
+    int maxWidth = 24;
+
     if (cities != NULL) {
-        int largura = 23;
         
-        printf(BLUE"                       ");
+        printf(BLUE"\t\t      ");
        
         while (cities != NULL) {
-            int largura = 24;
-            int size = largura - strlen(cities->name);
-            int espaco = (size / 2);
+            int maxWidth = 25;
+            int cityNameSize = strlen(cities->name);
+            int espacoDireita = (maxWidth - cityNameSize) / 2;
+            int espacoEsquerda = maxWidth - cityNameSize - espacoDireita;
             
-            printf("%*s%s%*s", espaco, " ", cities->name, espaco, " ");
+            printf("%*s%s%*s", espacoDireita, "", cities->name, espacoEsquerda, "");
             cities = cities->next;
         }
 
@@ -229,17 +230,15 @@ void printAdjacencyMatrix(Graph *graph) {
         int cityCount = getCitiesCount(graph);
 
         for (int i = 0; i < cityCount; i++) {
-            printf("%-22s|", cities->name);
+            printf("%-21s|", cities->name);
             
             for (int j = 0; j < cityCount; j++) {
-                int tamanho = returnNumLenght(graph->adj[i][j]);
-                int result = (largura - tamanho) / 2;
-                if (tamanho % 2 == 0) {
-                    printf("%*s%d%*s |", result, "", graph->adj[i][j], result, "");
-                }
-                else {
-                    printf("%*s%d%*s|", result, "", graph->adj[i][j], result, ""); 
-                }       
+                int numberSize = snprintf(NULL, 0, "%d", graph->adj[i][j]);
+                
+                int espacoDireita = (maxWidth - numberSize) / 2;
+                int espacoEsquerda = maxWidth - numberSize - espacoDireita;
+
+                printf("%*s%d%*s|", espacoDireita, "", graph->adj[i][j], espacoEsquerda, "");
             }
             
             cities = cities->next;
