@@ -517,7 +517,7 @@ int compareQueueNodes(const void *a, const void *b) {
 PriorityQueue *createPriorityQueue(int numVertices) {
     PriorityQueue *pq = (PriorityQueue *) malloc(sizeof(PriorityQueue));
     pq->size = 0;
-    pq->heap = (NodeQueue *) malloc(sizeof(NodeQueue) * numVertices);
+    pq->heap = (NodeQueue *) malloc(sizeof(NodeQueue) * (numVertices * numVertices));
     return pq;
 }
 
@@ -627,7 +627,7 @@ void printResultForDijkstra(Graph *g, int *path, int *distance, int origem) {
     for (int i = 0; i < cityCount; i++) {
         City *city = searchCity(g, i);
         
-        printf(GREEN"Caminhos minimos de \"%s\": ", city->name);
+        printf(GOLDEN"Caminhos minimos de \"%s\": ", city->name);
         printPath(g, i, path);
         
         if (distance[i] != INT_MAX) {
@@ -652,5 +652,5 @@ void printPath(Graph *g, int destino, int *path) {
     }
 
     printPath(g, path[destino], path);
-    printf("-> \"%s\" ", city->name);
+    printf("vai para \"%s\" ", city->name);
 }
