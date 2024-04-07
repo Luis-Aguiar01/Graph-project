@@ -522,6 +522,16 @@ PriorityQueue *createPriorityQueue(int numVertices) {
 }
 
 void enqueue(PriorityQueue *pq, int id, int custo) {
+    for (int i = 0; i < pq->size; i++) {
+        if (pq->heap[i].id == id) {
+            if (pq->heap[i].custo > custo) {
+                pq->heap[i].custo = custo;
+                qsort(pq->heap, pq->size, sizeof(NodeQueue), compareQueueNodes);
+            }
+            return;
+        }
+    }
+
     NodeQueue node;
     node.id = id;
     node.custo = custo;
@@ -533,7 +543,14 @@ void enqueue(PriorityQueue *pq, int id, int custo) {
 }
 
 NodeQueue dequeue(PriorityQueue *pq) {
-    return pq->heap[--pq->size];
+    NodeQueue node = pq->heap[0];
+    pq->size--;
+    
+    for(int i = 0; i < pq->size; i++) {
+        pq->heap[i] = pq->heap[i + 1];
+    }
+
+    return node;
 }
 
 void chooseCityForMinPath(Graph *graph) {
@@ -595,7 +612,7 @@ void dijkstra(Graph *g, int origem) {
             int weight = g->adj[city1][city2];
             bool result = distance[city1] + weight < distance[city2];
 
-            if (result && !visited[city1] && weight != 0 && distance[city1] != INT_MAX) {
+            if (result && !visited[city2] && weight != 0 && distance[city1] != INT_MAX) {
                 distance[city2] = distance[city1] + weight;
                 path[city2] = city1;
                 
@@ -607,6 +624,9 @@ void dijkstra(Graph *g, int origem) {
     }
 
     printResultForDijkstra(g, path, distance, origem);
+
+    free(pq->heap);
+    free(pq);
 
     aguardarEnter(); 
 }
@@ -627,14 +647,19 @@ void printResultForDijkstra(Graph *g, int *path, int *distance, int origem) {
     for (int i = 0; i < cityCount; i++) {
         City *city = searchCity(g, i);
         
-        printf(GOLDEN"Caminhos minimos de \"%s\": ", city->name);
-        printPath(g, i, path);
+        printf(GOLDEN"Caminhos minimos para \"%s\": ", city->name);
         
         if (distance[i] != INT_MAX) {
-            printf("(%d) km.", distance[i]);
+            if (distance[i] == 0) {
+                printf("(0) km.\n");
+            }
+            else {
+                printPath(g, i, path);
+                printf("(%d) km.\n", distance[i]);  
+            }
         }
         else {
-            printf(" -> Nao ha caminho para essa cidade.");
+            printf("Nao ha caminho para essa cidade.\n");
         }
         
         printf("\n\n"RESET);
